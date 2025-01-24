@@ -32,7 +32,7 @@ export default function Sidebar() {
     <aside className="w-60 bg-black h-screen fixed left-0 top-0 flex flex-col border-r border-neutral-800/50">
       <div className="p-4 border-b border-neutral-800/50 bg-neutral-900/30">
         <div className="text-xl font-bold text-white relative">
-          <span className="text-blue-400">VOID</span>Cast
+          <span className="text-blue-400">VOID</span> Streaming
           <div className="absolute -top-1 -right-2 w-2 h-2 bg-blue-500 animate-pulse" />
         </div>
       </div>

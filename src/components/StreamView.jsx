@@ -1,7 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { Radio, Users, Heart, Share2, Volume2, Settings, Maximize2 } from 'lucide-react';
 
+import { StreamService } from '@/services/StreamService';
+
 export default function StreamView({ stream }) {
+  const videoRef = useRef(null);
+  const streamServiceRef = useRef(null);
+  const [isStreaming, setIsStreaming] = useState(false);
   const [volume, setVolume] = useState(100);
   const [quality, setQuality] = useState('1080p');
   const [showSettings, setShowSettings] = useState(false);
@@ -28,8 +33,20 @@ export default function StreamView({ stream }) {
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  }, []);
+
+    if (videoRef.current && stream?.id) {
+      streamServiceRef.current = new StreamService(videoRef.current);
+      streamServiceRef.current.connect(stream.id);
+      setIsStreaming(true);
+    }
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      if (streamServiceRef.current) {
+        streamServiceRef.current.disconnect();
+      }
+    };
+  }, [stream?.id]);
 
   const shareOptions = [
     { label: 'Copy Link', action: () => navigator.clipboard.writeText(window.location.href) },
@@ -43,13 +60,21 @@ export default function StreamView({ stream }) {
         ref={streamContainerRef}
         className="relative pt-[56.25%] bg-gradient-to-br from-neutral-900 to-black group max-h-[calc(90vh-50px)]"
       >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <Radio className="w-16 h-16 text-blue-500 animate-pulse mb-4" />
-            <div className="text-2xl font-bold text-white mb-2">LIVE STREAM</div>
-            <div className="text-neutral-400">{quality} • 60 FPS</div>
+        <video 
+            ref={videoRef}
+            className="absolute inset-0 w-full h-full"
+            autoPlay
+            playsInline
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            {!isStreaming && (
+              <div className="text-center">
+                <Radio className="w-16 h-16 text-blue-500 animate-pulse mb-4" />
+                <div className="text-2xl font-bold text-white mb-2">LIVE STREAM</div>
+                <div className="text-neutral-400">{quality} • 60 FPS</div>
+              </div>
+            )}
           </div>
-        </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="flex flex-col gap-4">

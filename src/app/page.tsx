@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
-import { StreamInfo } from '@/components/StreamInfo';
 import TopNav from '@/components/TopNav';
 import StreamView from '@/components/StreamView';
 import ChatPanel from '@/components/ChatPanel';
@@ -38,9 +37,7 @@ export default function StreamingApp() {
           <div className="flex">
             <div className="flex-1">
               <StreamView stream={selectedStream} />
-              <div className="p-4 bg-neutral-900/30">
-                <StreamInfo stream={selectedStream} />
-              </div>
+
             </div>
             {showChat && <ChatPanel />}
           </div>
